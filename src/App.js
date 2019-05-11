@@ -5,14 +5,15 @@ import OrderSelector from './components/OrderSelector';
 import ProductTable from './components/ProductTable';
 
 const App = ({ products }) => {
-  const [selects, setSelects] = useState([{"sku":"123", "qty":1, "price":12.5}, {"sku":"456", "qty":1, "price":12.5}]);
+  const [selects, setSelects] = useState([]);
+  const [show, setShow] = useState(false);
 
   return (
     <div className="shopping-page">
-      <Cart selects={ selects } />
+      <Cart selects={ selects } cartState={ { show, setShow } } />
       <SizeSelector />
       <OrderSelector />
-      <ProductTable products={ products } />
+      <ProductTable products={ products } setShow={ setShow } />
     </div>
   );
 }

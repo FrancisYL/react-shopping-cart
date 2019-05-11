@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-const ProductCard = ({ product }) => (
+const ProductCard = ({ product, setShow }) => (
   <Grid item xs={3}>
     <Card>
       <CardContent>
@@ -30,7 +30,7 @@ const ProductCard = ({ product }) => (
         </Typography>
       </CardContent>
       <CardActions>
-        <Button variant="contained" color="primary" fullWidth>
+        <Button variant="contained" color="primary" fullWidth onClick={ () => setShow(true) } >
           { 'Add to Cart' }
         </Button>
       </CardActions>
