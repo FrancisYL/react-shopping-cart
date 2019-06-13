@@ -8,7 +8,7 @@ import CardActions from '@material-ui/core/CardActions';
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
-const ProductCard = ({ product, productInventory, setInventory, setShow, toggleSelection, db }) => {
+const ProductCard = ({ product, productInventory, setInventory, setShow, toggleSelection, db, user }) => {
   const [size, setSize] = useState(null);
 
   const chooseSize = (selectedSize) => {
@@ -19,14 +19,18 @@ const ProductCard = ({ product, productInventory, setInventory, setShow, toggleS
     if (size === null) {
       alert('Please select a size');
     } else {
-      if ((productInventory[size] - 1) === 0) {
-        setSize(null);
+      if (user === null) {
+        alert('Please log in');
+      } else {
+        if ((productInventory[size] - 1) === 0) {
+          setSize(null);
+        }
+        toggleSelection(product, size, 1);
+        db.ref('/inventory').child(product.sku).update({
+          [size]: productInventory[size] - 1
+        });
+        setShow(true);
       }
-      toggleSelection(product, size, 1);
-      db.ref('/inventory').child(product.sku).update({
-        [size]: productInventory[size] - 1
-      })
-      setShow(true);
     }
   }
 

@@ -3,7 +3,7 @@ import ProductCard from '../components/ProductCard';
 
 import Grid from '@material-ui/core/Grid';
 
-const ProductTable = ({ products, setShow, toggleSelection, inventoryState, db }) => {
+const ProductTable = ({ products, setShow, toggleSelection, inventoryState, db, user }) => {
   const skus = Object.keys(products);
 
   return (
@@ -18,6 +18,7 @@ const ProductTable = ({ products, setShow, toggleSelection, inventoryState, db }
                                 setShow={ setShow }
                                 toggleSelection={ toggleSelection }
                                 db={ db }
+                                user={ user }
                     />
           }
           else return null;

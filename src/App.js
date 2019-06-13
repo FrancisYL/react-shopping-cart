@@ -3,8 +3,12 @@ import Cart from './components/Cart';
 import SizeSelector from './components/SizeSelector';
 import OrderSelector from './components/OrderSelector';
 import ProductTable from './components/ProductTable';
+import "rbx/index.css";
+import { Button, Container, Message } from "rbx";
+import StyledFirebaseAuth from 'react-firebaseui/StyledFirebaseAuth';
 import firebase from 'firebase/app';
 import 'firebase/database';
+import 'firebase/auth';
 
 var firebaseConfig = {
   apiKey: "AIzaSyD-wpCPVpq6U6hAq4WwzVSpNDdYEoWrxCQ",
@@ -18,6 +22,41 @@ var firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+
+const uiConfig = {
+  signInFlow: 'popup',
+  signInOptions: [
+    firebase.auth.GoogleAuthProvider.PROVIDER_ID
+  ],
+  callbacks: {
+    signInSuccessWithAuthResult: () => false
+  }
+};
+
+const Banner = ({ user }) => (
+  <React.Fragment>
+    { user ? <Welcome user={ user } /> : <SignIn /> }
+    {/* <Title>{ title || '[loading...]' }</Title> */}
+  </React.Fragment>
+);
+
+const Welcome = ({ user }) => (
+  <Message color="info">
+    <Message.Header>
+      Welcome, {user.displayName}
+      <Button primary onClick={() => firebase.auth().signOut()}>
+        Log out
+      </Button>
+    </Message.Header>
+  </Message>
+);
+
+const SignIn = () => (
+  <StyledFirebaseAuth
+    uiConfig={uiConfig}
+    firebaseAuth={firebase.auth()}
+  />
+);
 
 const useSelection = () => {
   const [selection, setSelection] = useState([]);
@@ -39,10 +78,15 @@ const useSelection = () => {
 }
 
 const App = ({ products }) => {
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    firebase.auth().onAuthStateChanged(setUser);
+  }, []);
+
   const [show, setShow] = useState(false);
   const [selection, toggleSelection] = useSelection();
+  
   const [inventory, setInventory] = useState(null);
-
   useEffect(() => {
     const handleData = snap => {
       if (snap.val()) {
@@ -55,10 +99,12 @@ const App = ({ products }) => {
 
   return (
     <div className="shopping-page">
+      <Banner user={ user } />
       <Cart cartState={ { show, setShow } }
             selectionState={ { selection, toggleSelection } }
             inventory={ inventory }
             db={ db }
+            user={ user }
       />
       <SizeSelector />
       <OrderSelector />
@@ -67,6 +113,7 @@ const App = ({ products }) => {
                     toggleSelection={ toggleSelection }
                     inventoryState={ { inventory, setInventory } }
                     db={ db }
+                    user={ user }
       />
     </div>
   );

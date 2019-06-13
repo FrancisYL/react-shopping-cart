@@ -3,14 +3,18 @@ import Button from '@material-ui/core/Button';
 import Drawer from '@material-ui/core/Drawer';
 import Typography from '@material-ui/core/Typography';
 
-const Cart = ({ cartState, selectionState, inventory, db }) => {
+const Cart = ({ cartState, selectionState, inventory, db, user }) => {
   const totalPrice = selectionState.selection.reduce((a, b) => a + b.price*b.qty, 0);
 
   const removeProduct = select => {
-    selectionState.toggleSelection(select, select.size, -1);
-    db.ref('/inventory').child(select.sku).update({
-      [select.size]: inventory[select.sku][select.size] + 1
-    })
+    if (user === null) {
+      alert('Please log in');
+    } else {
+      selectionState.toggleSelection(select, select.size, -1);
+      db.ref('/inventory').child(select.sku).update({
+        [select.size]: inventory[select.sku][select.size] + 1
+      });
+    }
   }
 
   return (
