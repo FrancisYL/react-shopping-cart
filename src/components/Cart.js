@@ -18,7 +18,7 @@ const Cart = ({ cartState, selectionState, inventory, db, user }) => {
   }
 
   const checkout = () => {
-    alert('Checkout, the total price is: ' + totalPrice);
+    alert('Checkout, the total price is: $' + totalPrice);
     db.ref('/carts/').update({
       [user.uid]: {}
     });
