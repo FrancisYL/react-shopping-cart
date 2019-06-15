@@ -17,6 +17,14 @@ const Cart = ({ cartState, selectionState, inventory, db, user }) => {
     }
   }
 
+  const checkout = () => {
+    alert('Checkout, the total price is: ' + totalPrice);
+    db.ref('/carts/').update({
+      [user.uid]: {}
+    });
+    selectionState.setSelection([]);
+  }
+
   return (
     <div className="shopping-cart">
       <Button variant="contained"
@@ -37,6 +45,11 @@ const Cart = ({ cartState, selectionState, inventory, db, user }) => {
             </Button>
           </React.Fragment> : null)}
         <Typography>{ 'Total Price: ' + totalPrice }</Typography>
+        { totalPrice !== 0 ?
+          <Button onClick={ () => checkout() } > Checkout</Button>
+          :
+          <Button disabled >Checkout</Button>
+        }
       </Drawer>
     </div>
   );

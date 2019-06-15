@@ -93,7 +93,7 @@ const App = ({ products }) => {
         setSelection(snap.val());
       }
     }
-    if (user !== null) db.ref("/carts/" + user.uid).once('value', handleData, error => alert(error));
+    if (user !== null) db.ref("/carts/" + user.uid).on('value', handleData, error => alert(error));
     else {
       setSelection([]);
     }
@@ -116,7 +116,7 @@ const App = ({ products }) => {
     <div className="shopping-page">
       <Banner user={ user } />
       <Cart cartState={ { show, setShow } }
-            selectionState={ { selection, toggleSelection } }
+            selectionState={ { selection, setSelection, toggleSelection } }
             inventory={ inventory }
             db={ db }
             user={ user }
