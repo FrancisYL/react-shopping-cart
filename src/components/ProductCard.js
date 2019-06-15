@@ -25,7 +25,7 @@ const ProductCard = ({ product, productInventory, setInventory, setShow, toggleS
         if ((productInventory[size] - 1) === 0) {
           setSize(null);
         }
-        toggleSelection(product, size, 1);
+        toggleSelection(product, size, 1, user);
         db.ref('/inventory').child(product.sku).update({
           [size]: productInventory[size] - 1
         });

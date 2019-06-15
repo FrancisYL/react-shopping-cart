@@ -10,7 +10,7 @@ const Cart = ({ cartState, selectionState, inventory, db, user }) => {
     if (user === null) {
       alert('Please log in');
     } else {
-      selectionState.toggleSelection(select, select.size, -1);
+      selectionState.toggleSelection(select, select.size, -1, user);
       db.ref('/inventory').child(select.sku).update({
         [select.size]: inventory[select.sku][select.size] + 1
       });

@@ -44,7 +44,7 @@ const Welcome = ({ user }) => (
   <Message color="info">
     <Message.Header>
       Welcome, {user.displayName}
-      <Button primary onClick={() => firebase.auth().signOut()}>
+      <Button primary onClick={ () => firebase.auth().signOut() }>
         Log out
       </Button>
     </Message.Header>
@@ -60,7 +60,7 @@ const SignIn = () => (
 
 const useSelection = () => {
   const [selection, setSelection] = useState([]);
-  const toggleSelection = (x, size, delta) => {
+  const toggleSelection = (x, size, delta, user) => {
     const newSelected = selection.slice();
     const index = newSelected.findIndex(obj => obj.sku === x.sku && obj.size === size);
     if (index === -1) {
@@ -73,8 +73,11 @@ const useSelection = () => {
       newSelected[index].qty += delta;
     }
     setSelection(newSelected);
+    db.ref("/carts/").update({
+      [user.uid]: newSelected,
+    });
   }
-  return [selection, toggleSelection];
+  return [selection, setSelection, toggleSelection];
 }
 
 const App = ({ products }) => {
@@ -83,8 +86,18 @@ const App = ({ products }) => {
     firebase.auth().onAuthStateChanged(setUser);
   }, []);
 
-  const [show, setShow] = useState(false);
-  const [selection, toggleSelection] = useSelection();
+  const [selection, setSelection, toggleSelection] = useSelection();
+  useEffect(() => {
+    const handleData = snap => {
+      if (snap.val()) {
+        setSelection(snap.val());
+      }
+    }
+    if (user !== null) db.ref("/carts/" + user.uid).once('value', handleData, error => alert(error));
+    else {
+      setSelection([]);
+    }
+  });
   
   const [inventory, setInventory] = useState(null);
   useEffect(() => {
@@ -97,6 +110,8 @@ const App = ({ products }) => {
     return () => { db.off('value', handleData); };
   }, []);
 
+  const [show, setShow] = useState(false);
+
   return (
     <div className="shopping-page">
       <Banner user={ user } />
@@ -106,8 +121,8 @@ const App = ({ products }) => {
             db={ db }
             user={ user }
       />
-      <SizeSelector />
-      <OrderSelector />
+      {/* <SizeSelector />
+      <OrderSelector /> */}
       <ProductTable products={ products }
                     setShow={ setShow }
                     toggleSelection={ toggleSelection }
